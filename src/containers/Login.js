@@ -31,7 +31,8 @@ export default class Login extends Component {
     try {
       const { email, password } = this.state;
       await this.login(email, password);
-      alert("Logged in!");
+      //alert("Logged in!");
+      this.props.userHasAuthenticated(true);
     } catch (e) {
       alert(JSON.stringify(e));
     }
