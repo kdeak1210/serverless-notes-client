@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { Nav, Navbar, NavItem } from 'react-bootstrap';
 import { authUser, signOutUser } from './libs/awsLib';
 import Routes from './Routes';
@@ -30,8 +30,8 @@ class App extends Component {
 
   handleLogout = (event) => {
     signOutUser();
-
     this.userHasAuthenticated(false);
+    this.props.history.push('/login');
   }
 
   render() {
@@ -68,4 +68,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default withRouter(App);

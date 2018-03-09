@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
-import { Button, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
+import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 import { 
   CognitoUserPool, 
   AuthenticationDetails, 
   CognitoUser 
 } from 'amazon-cognito-identity-js';
-import './Login.css';
 import config from '../config';
+import './Login.css';
+import LoaderButton from '../components/LoaderButton';
 
 export default class Login extends Component {
   state = {
+    isLoading: false,
     email: '',
     password: '',
   };
@@ -27,14 +29,17 @@ export default class Login extends Component {
 
   handleSubmit = async (event) => {
     event.preventDefault();
+    this.setState({ isLoading: true });
 
     try {
       const { email, password } = this.state;
       await this.login(email, password);
-      //alert("Logged in!");
       this.props.userHasAuthenticated(true);
+      // Redirect, unmounting component and destroying local state.
+      this.props.history.push('/');
     } catch (e) {
       alert(JSON.stringify(e));
+      this.setState({ isLoading: false });
     }
   }
 
@@ -77,14 +82,15 @@ export default class Login extends Component {
               onChange={this.handleChange}
             />
           </FormGroup>
-          <Button
+          <LoaderButton
             block
             bsSize="large"
-            disabled={!this.validateForm()}
             type="submit"
-          >
-            Login
-          </Button>
+            disabled={!this.validateForm()}
+            isLoading={this.state.isLoading}
+            text="Login"
+            loadingText="Logging in..."
+          />
         </form>
       </div>
     );
