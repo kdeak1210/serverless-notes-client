@@ -14,6 +14,15 @@ export async function authUser() {
   return true;
 }
 
+/** If there is a currentUser, sign them out using AWS Cognito JS SDK */
+export function signOutUser() {
+  const currentUser = getCurrentUser();
+
+  if (currentUser !== null) {
+    currentUser.signOut();
+  }
+}
+
 /**
  * Given a currentUser object, gets the user's session and user token.
  * 
