@@ -1,5 +1,23 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px;
+  color: #333;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "PT Serif", serif;
+}
+
+/* Prevent mobile browser zooming in on form fields on focus */
+select.form-control,
+textarea.form-control,
+input.form-control {
+  font-size: 16px;
+}
+
+/* Prevent page on mobile from overflowing and adding a scrollbar */
+input[type=file] {
+  width: 100%;
 }
