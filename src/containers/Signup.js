@@ -80,7 +80,7 @@ export default class Signup extends Component {
       ClientId: config.cognito.APP_CLIENT_ID
     });
 
-    return new Promnise((resolve, reject) => 
+    return new Promise((resolve, reject) => 
       userPool.signUp(email, password, [], null, (err, result) => {
         if (err) {
           reject(err);
@@ -110,10 +110,10 @@ export default class Signup extends Component {
       Username: email,
       Password: password
     };
-    const AuthenticationDetails = new AuthenticationDetails(authenticationData);
+    const authenticationDetails = new AuthenticationDetails(authenticationData);
 
     return new Promise((resolve, reject) =>
-      user.authenticateUser(AuthenticationDetails, {
+      user.authenticateUser(authenticationDetails, {
         onSuccess: result => resolve(),
         onFailure: err => reject(err)
       })
