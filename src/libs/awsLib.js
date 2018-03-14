@@ -90,12 +90,18 @@ export async function authUser() {
   return true;
 }
 
-/** If there is a currentUser, sign them out using AWS Cognito JS SDK */
+/** If there is a currentUser, sign them out w/ AWS Cognito SDK & clear localStorage */
 export function signOutUser() {
   const currentUser = getCurrentUser();
 
   if (currentUser !== null) {
     currentUser.signOut();
+  }
+
+  // Clear AWS JS SDK cache & reset credentials that it saves in localStorage
+  if (AWS.config.credentials) {
+    AWS.config.credentials.clearCachedId();
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials({});
   }
 }
 
