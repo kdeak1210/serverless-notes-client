@@ -37,7 +37,7 @@ export async function invokeApig({
     body
   });
 
-  if (results.status != 200) {
+  if (results.status !== 200) {
     throw new Error(await results.text());
   }
 
