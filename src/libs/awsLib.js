@@ -30,8 +30,6 @@ export async function invokeApig({
   body = body ? JSON.stringify(body) : body;
   headers = signedRequest.headers;
 
-  console.log(signedRequest)
-
   // Use the signed headers to make a HTTP fetch request
   const results = await fetch(signedRequest.url, {
     method,
