@@ -1,6 +1,48 @@
 import AWS from 'aws-sdk';
 import { CognitoUserPool } from 'amazon-cognito-identity-js';
+import sigV4Client from './sigV4Client';
 import config from '../config';
+
+/** Make a signed request to API Gateway */
+export async function invokeApig({
+  path,
+  method = "GET",
+  headers = {},
+  queryParams = {},
+  body
+}) {
+  // Ensure user is authenticated, & generate temp credentials w/ authUser()
+  if (!await authUser()) {
+    throw new Error('User is not logged in.');
+  }
+
+  // Generate a signed request using sigV4Client w/ temp credentials
+  const signedRequest = sigV4Client
+    .newClient({
+      accessKey: AWS.config.credentials.accessKeyId,
+      secretKey: AWS.config.credentials.secretAccessKey,
+      sessionToken: AWS.config.credentials.sessionToken,
+      region: config.apiGateway.REGION,
+      endpoint: config.apiGateway.URL
+    })
+    .signRequest({method, path, headers, queryParams, body});
+
+  body = body ? JSON.stringify(body) : body;
+  headers = signedRequest.headers;
+
+  // Use the signed headers to make a HTTP fetch request
+  const results = await fetch(signedRequest.url, {
+    method,
+    headers,
+    body
+  });
+
+  if (results.status != 200) {
+    throw new Error(await results.text());
+  }
+
+  return results.json();
+}
 
 /** Returns true if we are able to authenticate the user, false otherwise */
 export async function authUser() {
