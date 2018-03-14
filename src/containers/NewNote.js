@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 import LoaderButton from '../components/LoaderButton';
 import config from '../config';
-import { invokeApig } from '../libs/awsLib';
+import { invokeApig, s3Upload } from '../libs/awsLib';
 import './NewNote.css';
 
 export default class NewNote extends Component {
@@ -19,7 +19,6 @@ export default class NewNote extends Component {
   }
 
   validateForm() {
-    console.log('validating...')
     return this.state.content.length > 0;
   }
 
@@ -45,8 +44,13 @@ export default class NewNote extends Component {
     this.setState({ isLoading: true });
 
     try {
+      const uploadedFilename = this.file
+      ? (await s3Upload(this.file)).Location
+      : null;
+
       await this.createNote({
-        content: this.state.content
+        content: this.state.content,
+        attachment: uploadedFilename  // S3 public URL of the file
       });
       this.props.history.push('/');
     } catch (e) {

@@ -44,6 +44,31 @@ export async function invokeApig({
   return results.json();
 }
 
+/** Given a file object, generates unique filename & upload the file
+ * to a S3 bucket w/ 'public-read' permissions, returning a Promise object
+*/
+export async function s3Upload(file) {
+  if (!await authUser()) {
+    throw new Error('USer is not logged in.');
+  }
+
+  const s3 = new AWS.S3({
+    params: {
+      Bucket: config.s3.BUCKET
+    }
+  });
+  const filename = `${AWS.config.credentials.identityId}-${Date.now()}-${file.name}`;
+
+  return s3
+    .upload({
+      Key: filename,
+      Body: file,
+      ContentType: file.type,
+      ACL: 'public-read'
+    })
+    .promise();
+}
+
 /** Returns true if we are able to authenticate the user, false otherwise */
 export async function authUser() {
   if (
