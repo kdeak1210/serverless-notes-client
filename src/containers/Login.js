@@ -36,8 +36,6 @@ export default class Login extends Component {
       const { email, password } = this.state;
       await this.login(email, password);
       this.props.userHasAuthenticated(true);
-      // Redirect, unmounting component and destroying local state.
-      this.props.history.push('/');
     } catch (e) {
       alert(JSON.stringify(e));
       this.setState({ isLoading: false });
