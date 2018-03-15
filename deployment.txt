@@ -79,3 +79,22 @@ Now let’s look at how we make changes and update our app. The process is very 
   We need to do the last step since CloudFront caches our objects in its edge locations. So to make sure that 
   our users see the latest version, we need to tell CloudFront to invalidate it’s cache in the edge locations.
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+My actual Re-deploy process
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1. Commit changes & do $ npm run build
+2. do $ aws s3 sync build/ s3://serverless-notes-app-client
+  - Push the new files to S3 static site bucket, changes should be live THERE on S3
+3. Invalidate the CloudFront Cache
+  - do $ aws cloudfront create-invalidation --distribution-id ESIW7KRTR4V2X --paths "/*"
+  - OR use AWS CloudFront GUI to manually do invalidation on wildcard paths
+
+This invalidates our distribution for the non-www version of the domain. If set up a www CNAME, we'd be 
+doing this for THAT distribution also. Consult that section of the tutorial if needed...
+
+*******************************************
+Added a npm scripts in package.json to automate the re-deployment process
+$ npm run deploy
+Should take care of everything (build, push to S3 bucket, invalidate CloudFront cache universally)
+*******************************************
